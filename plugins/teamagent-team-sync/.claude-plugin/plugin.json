@@ -1,0 +1,8 @@
+{
+  "name": "teamagent-team-sync",
+  "description": "Promote a personal Claude-Code rule into a team-wide pack, sync on SessionStart, and resolve conflicts when two engineers corrected the same mistake differently.",
+  "version": "0.1.0",
+  "author": {
+    "name": "libz-renlab-ai"
+  }
+}
