@@ -19,11 +19,11 @@ A three-plugin Claude Code marketplace that turns one user-correction into a rul
 
 <div align="center">
 
-## ▷ Live demo (30 seconds)
+## ▷ Live demo (real tmux, 14 s)
 
-<img src="docs/verify/demo.gif" alt="A/B demo: same prompt, with vs without teamagent-memory. A recommends moment (the deprecated lib). B refuses, citing the team rule, and recommends dayjs." width="820" />
+<img src="docs/verify/demo.gif" alt="Real tmux session. Left pane scroll-focuses through Alice's rule card, then the PreToolUse hook source where it emits decision:block, then the Stop hook's correction-pattern regex catalogue. Right pane runs claudefast: A (no plugin) recommends the deprecated moment.js; B pipes the exact npm-install-moment PreToolUse payload through the hook and prints the literal {decision:'block'} JSON. Final yellow caption: previous Claude made the mistake, new Claude tried to repeat it, TeamAgent blocked it." width="820" />
 
-<sub><i>Same prompt. <b>A:</b> no plugin → recommends the deprecated <code>moment</code>. <b>B:</b> <code>--plugin-dir teamagent-memory</code> → refuses and cites the team rule.</i></sub>
+<sub><i>Real <code>tmux</code> · two panes · live-driven by an agent step-by-step (no fixed script). <b>Left:</b> source code, focus window scrolls through rule card → <code>pretooluse-enforce.cjs</code> block emit → <code>stop-capture.cjs</code> regex catalogue. <b>Right:</b> A (no plugin) — model recommends <code>moment</code>; B — same PreToolUse payload piped through the hook returns a literal <code>{"decision":"block",...}</code>.</i></sub>
 
 </div>
 
@@ -123,13 +123,21 @@ Raw evidence checked into the repo:
 - `docs/verify/A-control.json` · `docs/verify/B-treatment.json` — raw `--output-format=json` from both runs
 - `docs/verify/B-stream.jsonl` — full `stream-json` audit trail with **every hook event timestamped**
 - `docs/verify/REPORT.md` — full verification report (read this if you're a CEO or buyer)
-- `docs/verify/demo.cast` · `docs/verify/demo.gif` — the GIF above, rerunnable
+- `docs/verify/demo.cast` — asciinema v2 cast of the GIF above (replay with `asciinema play`)
+- `docs/verify/focus.sh` — the scroll-focus viewer used in the left tmux pane
+- `docs/verify/archive/demo-v1.*` — previous single-pane bash recording, kept for provenance
 
-Reproduce the demo yourself:
+Reproduce the PreToolUse block manually (works against any active rule card):
 
 ```bash
-bash docs/verify/demo.sh
+mkdir -p .teamagent/rules/active
+cp docs/verify/sample-rule.json .teamagent/rules/active/   # or write your own
+echo '{"tool_name":"Bash","tool_input":{"command":"npm install moment"}}' \
+  | node plugins/teamagent-memory/hooks/pretooluse-enforce.cjs
+# → {"decision":"block","reason":"TeamAgent rule …"}
 ```
+
+The GIF itself was produced by a live agent driving `tmux send-keys` + `tmux capture-pane` step-by-step (no self-driving demo.sh) and recorded via `asciinema rec --output-format asciicast-v2 --command 'tmux attach …' --window-size 130x38`.
 
 ---
 
@@ -218,8 +226,15 @@ Validation utility scripts also shipped:
 python3 .claude/skills/teambrain-office-hours-grill-eval/scripts/eval_grill_output.py docs/grill-answer.md
 # → {"pass": true, "score_total": 30, ...}
 
-# Smoke-test the three hook scripts and the CLI in one go
-bash docs/verify/demo.sh
+# Smoke-test the PreToolUse hook directly against a sample rule
+mkdir -p .teamagent/rules/active
+cp docs/verify/sample-rule.json .teamagent/rules/active/
+echo '{"tool_name":"Bash","tool_input":{"command":"npm install moment"}}' \
+  | node plugins/teamagent-memory/hooks/pretooluse-enforce.cjs
+# → {"decision":"block","reason":"TeamAgent rule sample-moment-dayjs: ..."}
+
+# Replay the recorded demo cast (asciinema v2)
+asciinema play docs/verify/demo.cast
 ```
 
 The CEO-readable verification report:
