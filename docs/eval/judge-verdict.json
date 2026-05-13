@@ -1,0 +1,19 @@
+{
+  "pass": true,
+  "score_total": 30,
+  "scores": {
+    "wedge_clarity": 3,
+    "demand_reality": 3,
+    "status_quo": 3,
+    "icp_specificity": 3,
+    "ceo_proof_loop": 3,
+    "shipped_vs_vision_honesty": 3,
+    "marketplace_skill_packaging": 3,
+    "security_trust": 3,
+    "actionability": 3,
+    "sharpness": 3
+  },
+  "must_fix": [],
+  "best_line": "Activity does not equal proof. The CEO must see a prevented repeat, not a busy dashboard.",
+  "fatal_issue": "null"
+}
