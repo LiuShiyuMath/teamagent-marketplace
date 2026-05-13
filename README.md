@@ -7,7 +7,7 @@ A Claude Code marketplace for **TeamBrain / TeamAgent** — turns one Claude Cod
 ## Install
 
 ```bash
-claude plugin marketplace add https://github.com/libz-renlab-ai/TeamBrain
+claude plugin marketplace add https://github.com/LiuShiyuMath/teamagent-marketplace
 claude plugin install teamagent-memory@teamagent-marketplace
 claude plugin install teamagent-proof-console@teamagent-marketplace
 claude plugin install teamagent-team-sync@teamagent-marketplace
