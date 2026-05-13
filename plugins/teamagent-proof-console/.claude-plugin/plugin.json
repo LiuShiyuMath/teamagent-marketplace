@@ -1,0 +1,8 @@
+{
+  "name": "teamagent-proof-console",
+  "description": "CEO-readable proof packet showing the exact moment TeamAgent blocked a new Claude Code session from repeating an old, user-corrected mistake (transcript + rule card + hook event + before/after diff).",
+  "version": "0.1.0",
+  "author": {
+    "name": "libz-renlab-ai"
+  }
+}
