@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+# teamagent — manage TeamAgent rule cards (list / approve / reject / show / doctor)
+# Dependencies: jq, awk, find, mv, rm, cat (coreutils). No network. No npm.
+
+set -u
+set -o pipefail
+
+RULES_ROOT="${TEAMAGENT_RULES_DIR:-$PWD/.teamagent/rules}"
+PENDING_DIR="$RULES_ROOT/pending"
+ACTIVE_DIR="$RULES_ROOT/active"
+HOOKS_JSON="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}/hooks/hooks.json"
+
+err() { printf 'teamagent: %s\n' "$*" >&2; }
+die() { err "$*"; exit 1; }
+
+need_jq() {
+  command -v jq >/dev/null 2>&1 || die "jq is required (brew install jq / apt install jq)"
+}
+
+ensure_dirs() {
+  mkdir -p "$PENDING_DIR" "$ACTIVE_DIR" 2>/dev/null || true
+}
+
+list_dir() {
+  local label="$1" dir="$2"
+  if [ ! -d "$dir" ]; then return 0; fi
+  local found=0
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    found=1
+    jq -r --arg label "$label" '
+      [ $label,
+        .id,
+        .trigger,
+        (.wrong + " -> " + .correct),
+        (.confidence|tostring)
+      ] | @tsv
+    ' "$f" 2>/dev/null
+  done < <(find "$dir" -maxdepth 1 -name '*.json' 2>/dev/null | sort)
+  return 0
+}
+
+cmd_list() {
+  need_jq
+  printf 'STATE\tID\tTRIGGER\tWRONG -> CORRECT\tCONF\n'
+  list_dir 'active'  "$ACTIVE_DIR"
+  list_dir 'pending' "$PENDING_DIR"
+  echo
+  echo 'Tip: teamagent approve <id>   teamagent reject <id>   teamagent show <id>'
+}
+
+resolve_pending() {
+  local id="$1" candidate="$PENDING_DIR/$1.json"
+  if [ -f "$candidate" ]; then printf '%s' "$candidate"; return 0; fi
+  find "$PENDING_DIR" -maxdepth 1 -name "*${id}*.json" -print -quit 2>/dev/null
+}
+
+resolve_any() {
+  local id="$1"
+  for d in "$ACTIVE_DIR" "$PENDING_DIR"; do
+    [ -f "$d/$id.json" ] && { printf '%s' "$d/$id.json"; return 0; }
+    local hit
+    hit="$(find "$d" -maxdepth 1 -name "*${id}*.json" -print -quit 2>/dev/null || true)"
+    if [ -n "$hit" ]; then printf '%s' "$hit"; return 0; fi
+  done
+  return 1
+}
+
+cmd_approve() {
+  ensure_dirs
+  [ $# -ge 1 ] || die 'usage: teamagent approve <id>'
+  local src; src="$(resolve_pending "$1" || true)"
+  [ -n "$src" ] && [ -f "$src" ] || die "no pending rule matches '$1'"
+  local base; base="$(basename "$src")"
+  mv "$src" "$ACTIVE_DIR/$base" || die "failed to move $src"
+  echo "approved: $ACTIVE_DIR/$base"
+}
+
+cmd_reject() {
+  ensure_dirs
+  [ $# -ge 1 ] || die 'usage: teamagent reject <id>'
+  local src; src="$(resolve_pending "$1" || true)"
+  [ -n "$src" ] && [ -f "$src" ] || die "no pending rule matches '$1'"
+  rm -f -- "$src" || die "failed to remove $src"
+  echo "rejected: $src"
+}
+
+cmd_show() {
+  need_jq
+  [ $# -ge 1 ] || die 'usage: teamagent show <id>'
+  local src; src="$(resolve_any "$1" || true)"
+  [ -n "$src" ] && [ -f "$src" ] || die "no rule matches '$1'"
+  jq . "$src"
+}
+
+cmd_doctor() {
+  ensure_dirs
+  local ok=1
+  if [ -d "$PENDING_DIR" ]; then echo "ok: $PENDING_DIR exists"; else echo "missing: $PENDING_DIR"; ok=0; fi
+  if [ -d "$ACTIVE_DIR" ];  then echo "ok: $ACTIVE_DIR exists";  else echo "missing: $ACTIVE_DIR";  ok=0; fi
+  if [ -f "$HOOKS_JSON" ]; then echo "ok: hooks manifest $HOOKS_JSON"; else echo "missing: $HOOKS_JSON"; ok=0; fi
+  local bad=0
+  while IFS= read -r f; do
+    [ -z "$f" ] && continue
+    if ! jq empty "$f" >/dev/null 2>&1; then echo "invalid json: $f"; bad=$((bad+1)); fi
+  done < <(find "$RULES_ROOT" -name '*.json' 2>/dev/null)
+  echo "rules scanned: $(find "$RULES_ROOT" -name '*.json' 2>/dev/null | wc -l | awk '{print $1}'); invalid: $bad"
+  [ "$ok" = 1 ] && [ "$bad" = 0 ]
+}
+
+main() {
+  local sub="${1:-}"
+  shift || true
+  case "$sub" in
+    list)    cmd_list "$@" ;;
+    approve) cmd_approve "$@" ;;
+    reject)  cmd_reject "$@" ;;
+    show)    cmd_show "$@" ;;
+    doctor)  cmd_doctor "$@" ;;
+    ''|-h|--help|help)
+      cat <<'USAGE'
+teamagent — TeamAgent rule card manager
+
+  teamagent list                 show active + pending rules as a table
+  teamagent approve <id>         promote pending/<id>.json to active/
+  teamagent reject  <id>         delete pending/<id>.json
+  teamagent show    <id>         pretty-print rule JSON
+  teamagent doctor               verify dirs, manifest, JSON validity
+
+Env:
+  TEAMAGENT_RULES_DIR   override rules root (default: $PWD/.teamagent/rules)
+  CLAUDE_PLUGIN_ROOT    override plugin root for doctor (set by Claude Code)
+USAGE
+      ;;
+    *) die "unknown subcommand: $sub (try 'teamagent help')" ;;
+  esac
+}
+
+main "$@"

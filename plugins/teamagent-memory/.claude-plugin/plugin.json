@@ -1,0 +1,8 @@
+{
+  "name": "teamagent-memory",
+  "description": "Capture user corrections from one Claude Code session as rule cards, then block the next Claude Code from repeating the same mistake at PreToolUse time (the moment->dayjs wedge).",
+  "version": "0.1.0",
+  "author": {
+    "name": "libz-renlab-ai"
+  }
+}
