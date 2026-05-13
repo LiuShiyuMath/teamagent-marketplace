@@ -1,0 +1,41 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "teamagent-marketplace",
+  "description": "TeamBrain / TeamAgent marketplace: turns one Claude Code's mistake-then-correction into a rule that a new Claude Code is blocked from repeating, with CEO-readable proof artifacts.",
+  "owner": {
+    "name": "libz-renlab-ai",
+    "email": "abcdefg@uoem.edu.gr"
+  },
+  "plugins": [
+    {
+      "name": "teamagent-memory",
+      "description": "Captures user-corrections from Stop events into rule cards and enforces them via PreToolUse blocks before a new Claude Code repeats the old mistake (e.g. moment->dayjs).",
+      "author": {
+        "name": "libz-renlab-ai"
+      },
+      "category": "team-coordination",
+      "source": "./plugins/teamagent-memory",
+      "homepage": "https://github.com/libz-renlab-ai/TeamBrain"
+    },
+    {
+      "name": "teamagent-proof-console",
+      "description": "Generates a CEO-readable proof-of-work packet (transcript, rule card, hook event, before/after diff) showing 'previous Claude made this mistake, new Claude tried to repeat it, TeamAgent blocked it'.",
+      "author": {
+        "name": "libz-renlab-ai"
+      },
+      "category": "evidence",
+      "source": "./plugins/teamagent-proof-console",
+      "homepage": "https://github.com/libz-renlab-ai/TeamBrain"
+    },
+    {
+      "name": "teamagent-team-sync",
+      "description": "Promotes a personal rule into a team-shared rule, syncs the team rule pack on SessionStart, and resolves conflicts when the same trigger has divergent corrections.",
+      "author": {
+        "name": "libz-renlab-ai"
+      },
+      "category": "team-coordination",
+      "source": "./plugins/teamagent-team-sync",
+      "homepage": "https://github.com/libz-renlab-ai/TeamBrain"
+    }
+  ]
+}
