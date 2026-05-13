@@ -1,0 +1,42 @@
+[
+  {
+    "hook": "UserPromptSubmit",
+    "ok": true,
+    "output": "{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"<system-reminder>\\nHeads-up: team rule ab-moment-dayjs says 'moment' -> 'dayjs'. Reason: Team-wide rule from Alice's earlier correction: moment is deprecated; use dayjs..\\n</system-reminder>\"}}\n"
+  },
+  {
+    "hook": "UserPromptSubmit",
+    "ok": true,
+    "output": "(node:61880) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "hook": "UserPromptSubmit",
+    "ok": true,
+    "output": ""
+  },
+  {
+    "hook": "Stop",
+    "ok": true,
+    "output": ""
+  },
+  {
+    "hook": "Stop",
+    "ok": true,
+    "output": ""
+  },
+  {
+    "hook": "Stop",
+    "ok": true,
+    "output": ""
+  },
+  {
+    "hook": "Stop",
+    "ok": true,
+    "output": "(node:62744) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+  },
+  {
+    "hook": "Stop",
+    "ok": true,
+    "output": "{\"session_id\":\"28b5e97b-d50d-409c-938d-5d6788b33823\",\"transcript_path\":\"/Users/m1/.claude/projects/-Users-m1--claude-jobs-ef0e1c33-ab-test/28b5e97b-d50d-409c-938d-5d6788b33823.jsonl\",\"cwd\":\"/Users/m1/.claude/jobs/ef0e1c33/ab-test\",\"permission_mode\":\"bypassPermissions\",\"effort\":{\"level\":\"xhigh\"},\"hook_event_name\":\"Stop\",\"stop_hook_active\":false,\"last_assistant_message\":\"moment is deprecated — the team rule says to use **dayjs** instead. Want me to install dayjs for you?\"}\n"
+  }
+]
