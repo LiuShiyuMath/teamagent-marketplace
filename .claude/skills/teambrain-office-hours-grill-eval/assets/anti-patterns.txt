@@ -1,0 +1,11 @@
+BAD: TeamBrain is a revolutionary platform for AI collaboration.
+BAD: The product has three equally important pillars.
+BAD: Engineering teams everywhere need this.
+BAD: Add more analytics, more dashboards, more integrations.
+BAD: Build a full marketplace first.
+BAD: The CEO can see lots of activity, therefore proof of work exists.
+BAD: Video recording is automatically compelling.
+BAD: Users will trust curl | bash because developers understand it.
+BAD: Claude marketplace strategy means packaging every feature as one giant plugin.
+BAD: The main competitor is other AI memory startups.
+BAD: This is a technical problem, not a demand problem.

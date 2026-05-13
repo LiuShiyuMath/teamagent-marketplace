@@ -1,0 +1,5 @@
+{"id":"gold-01","label":"strong","task":"Grill TeamBrain using office-hours style.","expected_traits":["single primary wedge","demotes dashboard/video","specific ICP","status quo alternatives","CEO proof loop","security trust","concrete next actions"],"minimum_score":24}
+{"id":"near-miss-01","label":"medium","task":"Critique TeamBrain product strategy.","expected_traits":["some wedge","some ICP","some next steps"],"failure_risks":["too much feature listing","weak proof loop","not sharp enough"],"minimum_score":18}
+{"id":"fail-01","label":"bad-summary","task":"Explain TeamBrain.","failure_risks":["repo summary only","no prioritization","no demand test","no CEO proof"],"maximum_score":12}
+{"id":"fail-02","label":"bad-hype","task":"Pitch TeamBrain as AI future platform.","failure_risks":["future hype","no status quo","no shipped-vs-vision boundary","no security"],"maximum_score":10}
+{"id":"fail-03","label":"bad-structure-only","task":"Create marketplace plugin dirs for TeamBrain.","failure_risks":["directory tree only","no product critique","no demand reality","no proof loop"],"maximum_score":14}
